@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Environment variables (API KEYS — NEVER COMMIT)
+.env
+*.env
+!.env.example
+
+# Data (too large for GitHub)
+backend/data/raw/*.pdf
+backend/data/processed/*.json
+backend/data/chunks/*.json
+backend/models/*.bin
+backend/models/*.safetensors
+backend/models/*.gguf
+
+# Colab notebooks checkpoints
+colab/.ipynb_checkpoints/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Flutter
+mobile-app/.dart_tool/
+mobile-app/build/
+mobile-app/.flutter-plugins
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
