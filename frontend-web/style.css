@@ -140,3 +140,30 @@ header { background: transparent !important; }
     [data-testid="stChatMessage"]:has(.user-msg) > div:last-child { max-width: 85% !important; }
     [data-testid="stChatMessage"]:not(:has(.user-msg)) > div:last-child { max-width: 95% !important; }
 }
+
+/* --- FORCE SIDEBAR TO STAY OPEN ON MOBILE --- */
+@media (max-width: 768px) {
+    /* Force the sidebar container to be visible and take up space */
+    [data-testid="stSidebar"] {
+        display: block !important;
+        visibility: visible !important;
+        transform: none !important;
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin-bottom: 20px !important;
+        border-right: none !important;
+        border-bottom: 1px solid #E5E7EB !important;
+    }
+    
+    /* Hide the sidebar close button since it's now part of the main screen */
+    [data-testid="stSidebarCollapseButton"] {
+        display: none !important;
+    }
+    
+    /* Make sure the main chat area is still readable below the sidebar */
+    .block-container {
+        padding-top: 0 !important;
+    }
+}
