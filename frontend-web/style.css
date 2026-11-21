@@ -6,14 +6,16 @@ html, body, [class*="css"] {
     color: #1F2937 !important;
 }
 
-#MainMenu, footer, header, .stDeployButton { visibility: hidden; display: none; }
+/* Hide defaults but KEEP the header visible so the sidebar toggle works! */
+#MainMenu, footer, .stDeployButton { visibility: hidden; display: none; }
+header { background-color: transparent !important; }
 
 .block-container {
     padding-top: 1.5rem !important;
     padding-bottom: 150px !important; 
 }
 
-/* HEADER */
+/* HEADER BANNER */
 .header-banner {
     background: linear-gradient(135deg, #00A1DE 0%, #20603D 100%);
     padding: 15px 25px;
@@ -31,7 +33,7 @@ html, body, [class*="css"] {
 .header-text h1 { color: white !important; font-size: 1.4rem; margin: 0; font-weight: 600; }
 .header-text p { font-size: 0.85rem; margin: 2px 0 0 0; opacity: 0.9; }
 
-/* CHAT CONTAINER */
+/* CHAT BUBBLES (ChatGPT/WhatsApp Style) */
 [data-testid="stChatMessage"] {
     padding: 15px 20px;
     border-radius: 15px;
@@ -40,7 +42,7 @@ html, body, [class*="css"] {
     max-width: 85%;
 }
 
-/* FORCE STUDENT (Right, Blue) */
+/* Student Bubble (Right) */
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
     background-color: #00A1DE !important;
     margin-left: auto !important;
@@ -53,7 +55,7 @@ html, body, [class*="css"] {
     color: white !important;
 }
 
-/* FORCE TUTOR (Left, White, Green) */
+/* Tutor Bubble (Left) */
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
     background-color: #FFFFFF !important;
     border-left: 5px solid #20603D !important;
@@ -100,16 +102,30 @@ html, body, [class*="css"] {
 }
 .stButton > button:hover { border-color: #00A1DE !important; background-color: #F0F8FF !important; }
 
+/* --- MOBILE FIXES --- */
 @media (max-width: 768px) {
-    /* ... existing code ... */
-    
-    /* Adjust chat bubbles for small screens */
+    /* 1. Make text fit perfectly in the banner */
+    .header-banner {
+        flex-direction: column;
+        height: auto;
+        text-align: center;
+        gap: 10px;
+        padding: 20px 15px;
+    }
+    .header-left { 
+        flex-direction: column; 
+        gap: 10px;
+    }
+    .header-text h1 { font-size: 1.2rem; }
+    .header-text p { font-size: 0.8rem; }
+
+    /* 2. Let the chat bubbles take up more width */
     [data-testid="stChatMessage"] {
-        max-width: 95% !important; /* Give the bubble more room */
-        padding: 10px 15px !important;
+        max-width: 90% !important; 
+        padding: 12px 15px !important;
     }
     
-    /* Ensure the sidebar isn't overly wide on tablets */
+    /* 3. Sidebar shouldn't cover the whole screen */
     [data-testid="stSidebar"] {
         min-width: 280px !important;
         max-width: 85vw !important;
