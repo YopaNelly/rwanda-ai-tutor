@@ -7,6 +7,28 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from backend.app.rag_pipeline import RAGPipeline
 from backend.app.llm_client import generate_tutor_response
 
+# Mobile App Manifest injection (PWA)
+st.markdown("""
+    <link rel="manifest" href="data:application/manifest+json,{
+        'name': 'Rwanda AI Physics Tutor',
+        'short_name': 'AI Tutor',
+        'description': 'Bilingual Physics tutor for Senior 4',
+        'start_url': '.',
+        'display': 'standalone',
+        'background_color': '#ffffff',
+        'theme_color': '#0078D4',
+        'icons': [{
+            'src': 'https://cdn-icons-png.flaticon.com/512/3663/3663674.png',
+            'sizes': '512x512',
+            'type': 'image/png'
+        }]
+    }">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+""", unsafe_allow_html=True)
+
 # Page config
 st.set_page_config(page_title="Rwanda AI Physics Tutor", page_icon="📚")
 st.title("📚 Rwanda AI Physics Tutor")
