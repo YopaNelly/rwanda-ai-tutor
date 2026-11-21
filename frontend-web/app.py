@@ -159,12 +159,20 @@ def main():
 
     # Render Chat
     for i, msg in enumerate(st.session_state.messages):
-        avatar = SVG_USER if msg["role"] == "user" else SVG_BOT
-        with st.chat_message(msg["role"], avatar=avatar):
-            if msg["role"] == "assistant":
-                render_assistant_message(msg["content"], is_welcome=(i == 0))
-            else:
-                st.markdown(msg["content"])
+        is_user = msg["role"] == "user"
+        avatar = SVG_USER if is_user else SVG_BOT
+        
+        # Use st.container to force alignment
+        if is_user:
+            col1, col2 = st.columns([1, 4])
+            with col2:
+                with st.chat_message("user", avatar=avatar):
+                    st.markdown(msg["content"])
+        else:
+            col1, col2 = st.columns([4, 1])
+            with col1:
+                with st.chat_message("assistant", avatar=avatar):
+                    render_assistant_message(msg["content"], is_welcome=(i == 0))
 
     # Starter Questions (Grid)
     if len(st.session_state.messages) <= 1:
@@ -192,14 +200,19 @@ def main():
             del st.session_state.prompt
 
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user", avatar=SVG_USER):
-            st.markdown(prompt)
+        
+        col1, col2 = st.columns([1, 4])
+        with col2:
+            with st.chat_message("user", avatar=SVG_USER):
+                st.markdown(prompt)
 
-        with st.chat_message("assistant", avatar=SVG_BOT):
-            with st.spinner(TEXTS[lang]['thinking']):
-                context_chunks = rag.search(prompt, top_k=2)
-                response = generate_tutor_response(prompt, context_chunks, lang)
-                render_assistant_message(response, is_welcome=False)
+        col1, col2 = st.columns([4, 1])
+        with col1:
+            with st.chat_message("assistant", avatar=SVG_BOT):
+                with st.spinner(TEXTS[lang]['thinking']):
+                    context_chunks = rag.search(prompt, top_k=2)
+                    response = generate_tutor_response(prompt, context_chunks, lang)
+                    render_assistant_message(response, is_welcome=False)
                 
         st.session_state.messages.append({"role": "assistant", "content": response})
 
