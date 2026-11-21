@@ -2,6 +2,7 @@ import streamlit as st
 import sys
 import os
 import re
+import base64
 from pathlib import Path
 
 # --- 1. BACKEND IMPORTS ---
@@ -10,16 +11,22 @@ from backend.app.rag_pipeline import RAGPipeline
 from backend.app.llm_client import generate_tutor_response
 
 # --- 2. PAGE CONFIG & PWA ---
-st.set_page_config(page_title="Rwanda AI Physics Tutor", page_icon="🇷🇼", layout="centered")
+st.set_page_config(page_title="Rwanda AI Physics Tutor", page_icon="📘", layout="centered")
 
-# --- 3. LOAD CUSTOM CSS & PWA MANIFEST ---
+# --- 3. SVG ICONS ---
+SVG_BOOK = """<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00A1DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>"""
+SVG_CITE = """<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>"""
+SVG_CHAT = """<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>"""
+SVG_USER = """<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>"""
+SVG_BOT = """<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#20603D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>"""
+
+# --- 4. LOAD CUSTOM CSS & PWA MANIFEST ---
 def load_css():
     css_path = Path(__file__).parent / "style.css"
     if css_path.exists():
         with open(css_path, "r") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-    # Inject PWA Meta Tags
     st.markdown("""
         <link rel="manifest" href="data:application/manifest+json,{
             'name': 'Rwanda AI Tutor',
@@ -27,58 +34,54 @@ def load_css():
             'start_url': '.',
             'display': 'standalone',
             'background_color': '#ffffff',
-            'theme_color': '#00A1DE',
-            'icons': [{'src': 'https://cdn-icons-png.flaticon.com/512/3663/3663674.png', 'sizes': '512x512', 'type': 'image/png'}]
+            'theme_color': '#00A1DE'
         }">
         <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     """, unsafe_allow_html=True)
 
-# --- 4. TRANSLATIONS ---
+# --- 5. TRANSLATIONS ---
 TEXTS = {
     "en": {
         "title": "Rwanda AI Physics Tutor",
         "tagline": "Hint-first learning for Senior 4 Physics",
-        "lang_selector": "🇬🇧 English | 🇷🇼 Kinyarwanda",
         "placeholder": "Ask a Physics question...",
         "thinking": "Thinking... (Searching textbook)",
-        "welcome": "👋 **Muraho! Hello!** I am your AI Physics tutor. I don't just give answers; I give **hints** to help you learn. Ask me about Lenses, Refraction, or Optical Instruments. Every answer cites the textbook page!",
-        "clear_btn": "🗑️ Clear Chat",
-        "sidebar_title": "📖 How to Use",
+        "welcome": "**Muraho! Hello!** I am your AI Physics tutor. I don't just give answers; I give **hints** to help you learn. Ask me about Lenses, Refraction, or Optical Instruments. Every answer cites the textbook page!",
+        "clear_btn": "Clear Chat",
+        "sidebar_title": "How to Use",
         "sidebar_guide": "1. Ask a question in English or Kinyarwanda.\n2. The tutor will give you a hint, not the final answer.\n3. Check the citation badge to find the page in your textbook.",
-        "topics_title": "📚 S4 Topics Covered",
+        "topics_title": "S4 Topics Covered",
         "topics": ["Thin Lenses", "Refraction of Light", "Optical Instruments", "Lens Formula & Power"],
         "credits": "Built for the Rwandan Education Challenge."
     },
     "rw": {
         "title": "Umwarimu wa Physics AI",
         "tagline": "Kwiga Physics mu buryo bworoshye (Senior 4)",
-        "lang_selector": "🇬🇧 English | 🇷🇼 Kinyarwanda",
         "placeholder": "Baza ikibazo cya Physics...",
         "thinking": "Ndatekereza... (Ndashakisha mu gitabo)",
-        "welcome": "👋 **Muraho!** Ndi umwarimu wawe wa Physics. Ntabwo nkuha igisubizo ako kanya, ahubwo **ndakuyobora** ngo wige. Baza ku bijyanye n'ibirahure (lenses), urumuri, cyangwa ibikoresho byo kureba. Buri gisubizo kigaragaza ipaji y'igitabo!",
-        "clear_btn": "🗑️ Tangira bushya",
-        "sidebar_title": "📖 Uko bikoreshwa",
+        "welcome": "**Muraho!** Ndi umwarimu wawe wa Physics. Ntabwo nkuha igisubizo ako kanya, ahubwo **ndakuyobora** ngo wige. Baza ku bijyanye n'ibirahure (lenses), urumuri, cyangwa ibikoresho byo kureba. Buri gisubizo kigaragaza ipaji y'igitabo!",
+        "clear_btn": "Tangira bushya",
+        "sidebar_title": "Uko bikoreshwa",
         "sidebar_guide": "1. Baza ikibazo mu Kinyarwanda cyangwa Icyongereza.\n2. Umwarimu azaguha ibisobanuro, atagusubiza ako kanya.\n3. Reba ikimenyetso cy'ipaji kugira ngo ubone aho usoma mu gitabo.",
-        "topics_title": "📚 Ibice bya S4",
+        "topics_title": "Ibice bya S4",
         "topics": ["Ibirahure (Thin Lenses)", "Urumuri (Refraction)", "Ibikoresho byo kureba", "Formula y'imbaraga"],
         "credits": "Yakorewe umushinga w'uburezi mu Rwanda."
     }
 }
 
-# --- 5. HELPER FUNCTIONS ---
+# --- 6. HELPER FUNCTIONS ---
 def render_header(lang):
     st.markdown(f"""
         <div class="header-banner">
-            <h1>🇷🇼 {TEXTS[lang]['title']}</h1>
+            {SVG_BOOK}
+            <h1>{TEXTS[lang]['title']}</h1>
             <p>{TEXTS[lang]['tagline']}</p>
         </div>
     """, unsafe_allow_html=True)
 
 def render_sidebar(lang):
     with st.sidebar:
-        st.image("https://cdn-icons-png.flaticon.com/512/3663/3663674.png", width=60)
         st.markdown(f"### {TEXTS[lang]['sidebar_title']}")
         st.info(TEXTS[lang]['sidebar_guide'])
         
@@ -89,66 +92,69 @@ def render_sidebar(lang):
         st.markdown("---")
         st.caption(TEXTS[lang]['credits'])
         
-        # Clear Chat Button
         if st.button(TEXTS[lang]['clear_btn'], use_container_width=True):
             st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
             st.rerun()
 
 def format_message_with_citation(text):
-    """Extracts the citation from the text and renders it as a HTML badge."""
-    # Look for "Source: Page X, Topic"
+    """Formats text, rendering LaTeX and extracting citations."""
+    # 1. Extract Citation
     match = re.search(r'Source:\s*(Page\s*\d+.*)', text, re.IGNORECASE)
+    citation = ""
     if match:
         citation = match.group(1).strip()
-        # Remove the citation from the main text
-        clean_text = text.replace(match.group(0), "").strip()
-        # Render text + styled badge
-        st.markdown(clean_text)
-        st.markdown(f'<div class="citation-badge">📖 {citation}</div>', unsafe_allow_html=True)
-    else:
-        st.markdown(text)
+        text = text.replace(match.group(0), "").strip()
+    
+    # 2. Render Text (Streamlit automatically renders LaTeX between $ or $$)
+    st.markdown(text)
+    
+    # 3. Render Citation Badge
+    if citation:
+        st.markdown(f'<div class="citation-badge">{SVG_CITE} {citation}</div>', unsafe_allow_html=True)
 
-# --- 6. MAIN APP ---
+# --- 7. MAIN APP ---
 def main():
     load_css()
     
-    # Language Toggle (Top of screen)
-    lang_selection = st.radio(
-        "", 
-        ["English", "Kinyarwanda"], 
-        horizontal=True, 
+    # Language Toggle (Segmented Control)
+    lang_selection = st.segmented_control(
+        "Language", 
+        options=["English", "Kinyarwanda"], 
+        default="English",
         label_visibility="collapsed"
     )
+    # Handle initial load where segmented_control might return None
+    if lang_selection is None:
+        lang_selection = "English"
+        
     lang = "en" if lang_selection == "English" else "rw"
     
     render_header(lang)
     render_sidebar(lang)
     
-    # Initialize RAG pipeline
     @st.cache_resource(show_spinner=False)
     def load_rag():
         return RAGPipeline()
     rag = load_rag()
 
-    # Initialize Chat History
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
     
-    # Translate the welcome message if the language changes and it's the only message
     if len(st.session_state.messages) == 1 and st.session_state.messages[0]["role"] == "assistant":
         st.session_state.messages[0]["content"] = TEXTS[lang]['welcome']
 
-    # Render Chat History
+    # Render Chat History with custom Avatars
     for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
+        avatar = SVG_USER if msg["role"] == "user" else SVG_BOT
+        with st.chat_message(msg["role"], avatar=avatar):
             if msg["role"] == "assistant":
                 format_message_with_citation(msg["content"])
             else:
                 st.markdown(msg["content"])
 
-    # Example Questions (Only show if chat is empty or just the welcome message)
+    # Example Questions (No Emojis)
     if len(st.session_state.messages) <= 1:
-        st.markdown("##### 💡 Try asking:")
+        st.markdown("##### Try asking:")
         col1, col2 = st.columns(2)
         examples = [
             ("What is the lens formula?", "Ni iyihe formula y'imbaraga z'ikirahure?"),
@@ -157,7 +163,6 @@ def main():
             ("How is lens power calculated?", "Ni gute imbaraga z'ikirahure zibarwa?")
         ]
         
-        # Pick language-specific examples
         selected_examples = [ex[0] if lang == "en" else ex[1] for ex in examples]
         
         if col1.button(selected_examples[0], use_container_width=True): st.session_state.prompt = selected_examples[0]
@@ -168,28 +173,23 @@ def main():
     # Chat Input
     user_input = st.chat_input(TEXTS[lang]['placeholder'])
     
-    # Handle Example Button Clicks or Chat Input
     prompt = getattr(st.session_state, 'prompt', None) or user_input
     if prompt:
-        # Clear the prompt state so it doesn't loop
         if hasattr(st.session_state, 'prompt'):
             del st.session_state.prompt
 
-        # Add user message
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
+        with st.chat_message("user", avatar=SVG_USER):
             st.markdown(prompt)
 
-        # Generate Response
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar=SVG_BOT):
             with st.spinner(TEXTS[lang]['thinking']):
                 context_chunks = rag.search(prompt, top_k=2)
                 response = generate_tutor_response(prompt, context_chunks, lang)
-                
                 format_message_with_citation(response)
                 
-        # Save to history
         st.session_state.messages.append({"role": "assistant", "content": response})
 
 if __name__ == "__main__":
     main()
+    
