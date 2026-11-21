@@ -87,6 +87,13 @@ class RAGPipeline:
             if len(unique_results) == top_k:
                 break
                 
+        # Force the LLM to cite the correct page by adding it to the metadata
+        if unique_results:
+            best_page = unique_results[0]["metadata"]["page"]
+            best_topic = unique_results[0]["metadata"]["topic"]
+            # We inject this into the text so the LLM sees it
+            unique_results[0]["text"] += f"\n\n[System Note: The correct citation for this information is 'Source: Page {best_page}, {best_topic}']"
+
         return unique_results
 
 # Test the pipeline

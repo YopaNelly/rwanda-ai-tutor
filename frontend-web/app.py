@@ -126,9 +126,8 @@ def render_assistant_message(msg_content, is_welcome=False):
         if match:
             citation = match.group(1).strip()
             text = text.replace(match.group(0), "").strip()
-        else:
-            if "lens" in text.lower() or "focal" in text.lower():
-                citation = "Page 2, Thin Lenses"
+        # REMOVED THE FAKE FALLBACK HERE
+        # No more forcing "Page 2" if the AI forgets.
     
     st.markdown(text)
     if citation:

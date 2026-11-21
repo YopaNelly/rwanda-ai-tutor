@@ -35,8 +35,8 @@ def generate_tutor_response(query: str, context_chunks: list, lang: str = "en") 
     
     payload = {
         "model": "openai/gpt-oss-20b", # Using the working model
-        "messages": [
-            {"role": "system", "content": system_prompt},
+         "messages": [
+            {"role": "system", "content": system_prompt + "\n\nCRITICAL: At the end of your answer, you MUST include the exact citation provided in the Context (e.g., 'Source: Page X, Topic'). Do not make up a page number."},
             {"role": "user", "content": user_prompt}
         ],
         "temperature": 0.3,
