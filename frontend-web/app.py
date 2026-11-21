@@ -91,6 +91,18 @@ def render_sidebar(lang):
             st.markdown(f'<div class="topic-row">{topic}</div>', unsafe_allow_html=True)
             
         st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
+        
+        # --- NEW TEXTBOOK DOWNLOAD BUTTON ---
+        st.markdown("<div class='section-title'>Textbook</div>", unsafe_allow_html=True)
+        st.download_button(
+            label="Download Physics S4 PDF",
+            data=open("backend/data/raw/nesa_physics_2021.pdf", "rb").read(),
+            file_name="Physics_S4_Textbook.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+        
+        st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
         st.caption(TEXTS[lang]['credits'])
         
         if st.button(TEXTS[lang]['clear_btn'], use_container_width=True):
@@ -206,4 +218,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
