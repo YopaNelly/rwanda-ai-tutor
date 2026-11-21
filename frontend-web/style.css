@@ -4,7 +4,12 @@
 html, body, [class*="css"] {
     font-family: 'Poppins', sans-serif !important;
     background-color: #F8F9FA;
+    color: #1F2937 !important;
 }
+
+/* Remove weird text selection highlighting from Streamlit */
+::selection { background: #00A1DE; color: white; }
+[data-testid="stSidebar"] ::selection { background: transparent; }
 
 /* Hide Streamlit Defaults */
 #MainMenu {visibility: hidden;}
@@ -12,7 +17,7 @@ footer {visibility: hidden;}
 header {visibility: hidden;}
 .stDeployButton {display:none;}
 
-/* Page Padding: Prevents chat input from hiding the last message */
+/* Page Padding */
 .block-container {
     padding-top: 1.5rem !important;
     padding-bottom: 150px !important; 
@@ -53,48 +58,42 @@ header {visibility: hidden;}
     opacity: 0.9;
 }
 
-/* --- CHAT BUBBLES (STAGGERED LAYOUT) --- */
+/* --- CHAT BUBBLES (TARGETING STREAMLIT DOM) --- */
+/* Base container */
 [data-testid="stChatMessage"] {
     padding: 15px 20px;
     border-radius: 15px;
     margin-bottom: 20px;
-    display: flex;
-    gap: 15px;
-    max-width: 85%; 
+    max-width: 85%;
 }
 
-/* Force Student Message (Right side) */
-[data-testid="stChatMessage"]:nth-child(even) {
+/* Student Message (Right side) */
+[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) {
     background-color: #00A1DE !important;
     color: white !important;
     margin-left: auto !important; 
+    margin-right: 0 !important;
     border-bottom-right-radius: 2px;
-    flex-direction: row-reverse; 
+}
+[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) p,
+[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) span {
+    color: white !important;
 }
 
-/* Force Tutor Message (Left side) */
-[data-testid="stChatMessage"]:nth-child(odd) {
+/* Tutor Message (Left side) */
+[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarAssistant"]) {
     background-color: #FFFFFF !important;
     border-left: 5px solid #20603D !important;
-    margin-right: auto !important; 
+    margin-right: auto !important;
+    margin-left: 0 !important;
     border-bottom-left-radius: 2px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* Student text color */
-[data-testid="stChatMessage"]:nth-child(even) p {
-    color: white !important;
-}
-
-/* SVG Avatar Styling */
-[data-testid="stChatMessage"] svg {
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-}
-[data-testid="stChatMessage"]:nth-child(even) svg { stroke: #ffffff !important; }
-[data-testid="stChatMessage"]:nth-child(odd) svg { stroke: #20603D !important; }
+/* Avatars */
+[data-testid="chatAvatarIcon-user"] { background-color: #00A1DE !important; }
+[data-testid="chatAvatarIcon-assistant"] { background-color: #FFFFFF !important; }
+[data-testid="chatAvatarIcon-assistant"] svg { stroke: #20603D !important; }
 
 /* --- CITATION BADGE --- */
 .citation-badge {
@@ -102,7 +101,7 @@ header {visibility: hidden;}
     align-items: center;
     gap: 6px;
     background-color: #FAD201;
-    color: #333;
+    color: #333 !important;
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -110,10 +109,7 @@ header {visibility: hidden;}
     margin-top: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.citation-badge svg {
-    width: 14px;
-    height: 14px;
-}
+.citation-badge svg { width: 14px; height: 14px; stroke: #333 !important; }
 
 /* --- STARTER BUTTONS --- */
 .stButton > button {
@@ -144,20 +140,12 @@ header {visibility: hidden;}
     gap: 10px;
     margin-bottom: 20px;
 }
-.sidebar-logo svg {
-    width: 40px !important;
-    height: 40px !important;
-    stroke: #00A1DE;
-}
-.sidebar-title {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #111827;
-}
+.sidebar-logo svg { width: 40px !important; height: 40px !important; stroke: #00A1DE; }
+.sidebar-title { font-weight: 600; font-size: 1.1rem; color: #111827; }
 .section-title {
     font-size: 0.8rem;
     text-transform: uppercase;
-    color: #4B5563; 
+    color: #4B5563 !important; 
     font-weight: 700;
     letter-spacing: 0.05em;
     margin-top: 20px;
@@ -165,19 +153,14 @@ header {visibility: hidden;}
 }
 .topic-row {
     font-size: 0.95rem; 
-    color: #1F2937; 
+    color: #1F2937 !important; 
     padding: 8px 0;
     border-bottom: 1px solid #F3F4F6;
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .header-banner {
-        flex-direction: column;
-        height: auto;
-        text-align: center;
-        gap: 10px;
-    }
+    .header-banner { flex-direction: column; height: auto; text-align: center; gap: 10px; }
     .header-left { flex-direction: column; }
     [data-testid="stChatMessage"] { max-width: 95%; }
 }
