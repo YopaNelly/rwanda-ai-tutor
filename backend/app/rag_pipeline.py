@@ -23,7 +23,7 @@ class RAGPipeline:
         ]
         
         # 3. Caching Logic (Prevents API Rate Limits)
-        index_path = str(corpus_path).replace("physics_corpus.json", "faiss_index.bin")
+        index_path = str(corpus_path).replace("physics_corpus.json", "faiss_index_v2.bin")
         
         if os.path.exists(index_path):
             print(f"Loading cached FAISS index from {index_path}...")
