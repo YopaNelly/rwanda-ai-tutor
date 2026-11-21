@@ -99,3 +99,19 @@ html, body, [class*="css"] {
     padding: 10px 15px !important;
 }
 .stButton > button:hover { border-color: #00A1DE !important; background-color: #F0F8FF !important; }
+
+@media (max-width: 768px) {
+    /* ... existing code ... */
+    
+    /* Adjust chat bubbles for small screens */
+    [data-testid="stChatMessage"] {
+        max-width: 95% !important; /* Give the bubble more room */
+        padding: 10px 15px !important;
+    }
+    
+    /* Ensure the sidebar isn't overly wide on tablets */
+    [data-testid="stSidebar"] {
+        min-width: 280px !important;
+        max-width: 85vw !important;
+    }
+}
