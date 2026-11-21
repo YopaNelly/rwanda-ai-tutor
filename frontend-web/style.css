@@ -6,13 +6,27 @@ html, body, [class*="css"] {
     color: #1F2937 !important;
 }
 
-/* Keep header visible for mobile hamburger menu */
-header { background-color: transparent !important; }
-[data-testid="stToolbar"], [data-testid="stDecoration"], footer { display: none !important; }
+/* Hide Streamlit Defaults but KEEP the header for the mobile hamburger menu */
+#MainMenu, footer, .stDeployButton, [data-testid="stToolbar"], [data-testid="stDecoration"] { 
+    visibility: hidden !important; 
+    display: none !important; 
+}
+header { background: transparent !important; }
 
+/* FORCE the sidebar toggle (3 dots/arrow) to be visible */
+[data-testid="stSidebarCollapsedControl"] { 
+    display: block !important; 
+    visibility: visible !important; 
+    opacity: 1 !important;
+    color: #20603D !important;
+}
+
+/* Center the main content on large screens */
 .block-container {
     padding-top: 1rem !important;
     padding-bottom: 160px !important; 
+    max-width: 800px !important; /* Keeps chat centered on desktop */
+    margin: 0 auto !important;
 }
 
 /* HEADER BANNER */
@@ -35,7 +49,7 @@ header { background-color: transparent !important; }
 
 /* CHAT BUBBLES (WhatsApp/ChatGPT Style) */
 [data-testid="stChatMessage"] {
-    background-color: transparent !important; /* Make container transparent */
+    background-color: transparent !important; 
     box-shadow: none !important;
     padding: 0 !important;
     margin-bottom: 12px !important;
@@ -43,7 +57,7 @@ header { background-color: transparent !important; }
     align-items: flex-start;
 }
 
-/* Hide avatars entirely */
+/* Hide avatars */
 [data-testid="chatAvatarIcon-user"], 
 [data-testid="chatAvatarIcon-assistant"] { display: none !important; }
 
@@ -117,7 +131,7 @@ header { background-color: transparent !important; }
 }
 .stButton > button:hover { border-color: #00A1DE !important; background-color: #F0F8FF !important; }
 
-/* MOBILE FIXES (400px) */
+/* MOBILE FIXES */
 @media (max-width: 640px) {
     .block-container { padding-left: 12px !important; padding-right: 12px !important; }
     .header-banner { flex-direction: column; align-items: flex-start; text-align: left; }

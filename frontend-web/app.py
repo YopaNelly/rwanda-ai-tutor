@@ -3,15 +3,19 @@ import sys
 import os
 import re
 from pathlib import Path
-from PIL import Image # Fixed missing import
+from PIL import Image
 
 # --- 1. BACKEND IMPORTS ---
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from backend.app.rag_pipeline import RAGPipeline
 from backend.app.llm_client import generate_tutor_response
 
-# --- 2. PAGE CONFIG ---
-st.set_page_config(page_title="Rwanda AI Physics Tutor", layout="centered")
+# --- 2. PAGE CONFIG (layout="wide" forces the mobile hamburger menu to appear) ---
+st.set_page_config(
+    page_title="Rwanda AI Physics Tutor", 
+    layout="wide", 
+    initial_sidebar_state="auto"
+)
 
 # --- 3. SVG ICONS ---
 SVG_BOOK = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#00A1DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>"""
@@ -65,11 +69,9 @@ TEXTS = {
 
 # --- 6. HELPER FUNCTIONS ---
 def render_user(text):
-    """Outputs a hidden marker for CSS targeting, then the user text."""
     st.markdown(f'<span class="user-msg"></span>{text}', unsafe_allow_html=True)
 
 def strip_emojis(text):
-    """Regex to remove emojis."""
     emoji_pattern = re.compile(
         "[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF\U0001F1E0-\U0001F1FF]", 
         flags=re.UNICODE
@@ -102,7 +104,6 @@ def render_sidebar(lang):
             
         st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
         
-        # TEXTBOOK DOWNLOAD
         st.markdown("<div class='section-title'>Reference Textbook</div>", unsafe_allow_html=True)
         pdf_path = "backend/data/raw/physics_learners_book.pdf"
         if os.path.exists(pdf_path):
@@ -147,7 +148,6 @@ def render_assistant_message(msg_content, is_welcome=False):
 def main():
     load_css()
     
-    # Language Selector
     lang_selection = st.pills(
         "Language", 
         options=["English", "Kinyarwanda"], 
@@ -172,7 +172,6 @@ def main():
         return RAGPipeline()
     rag = load_rag()
 
-    # Render Chat History
     for i, msg in enumerate(st.session_state.messages):
         with st.chat_message(msg["role"]):
             if msg["role"] == "assistant":
@@ -180,7 +179,6 @@ def main():
             else:
                 render_user(msg["content"])
 
-    # Starter Questions
     if len(st.session_state.messages) <= 1:
         st.markdown("<div class='section-title' style='margin-top:0;'>Try asking:</div>", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
@@ -197,7 +195,6 @@ def main():
         if col1.button(selected_examples[2], use_container_width=True): st.session_state.prompt = selected_examples[2]
         if col2.button(selected_examples[3], use_container_width=True): st.session_state.prompt = selected_examples[3]
 
-    # Chat Input
     user_input = st.chat_input(TEXTS[lang]['placeholder'])
     
     prompt = getattr(st.session_state, 'prompt', None) or user_input
