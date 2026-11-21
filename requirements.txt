@@ -1,5 +1,5 @@
+# Force rebuild v3
 streamlit
-fastembed-cloud
 faiss-cpu
 requests
 python-dotenv
