@@ -133,6 +133,10 @@ def main():
     # Initialize Chat History
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
+    
+    # Translate the welcome message if the language changes and it's the only message
+    if len(st.session_state.messages) == 1 and st.session_state.messages[0]["role"] == "assistant":
+        st.session_state.messages[0]["content"] = TEXTS[lang]['welcome']
 
     # Render Chat History
     for msg in st.session_state.messages:
@@ -189,4 +193,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
