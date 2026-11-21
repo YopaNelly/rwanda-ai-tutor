@@ -1,37 +1,40 @@
 import os
 import requests
+from pathlib import Path
 from dotenv import load_dotenv
 
-# Add this import
-from pathlib import Path
-
-# Load environment variables
+# Load env variables
 load_dotenv("backend/.env")
-
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 def generate_tutor_response(query: str, context_chunks: list, lang: str = "en") -> str:
-    # Format the retrieved context
+    """Calls Groq API with the retrieved context."""
+    
+    # 1. Format the retrieved context
     context_text = ""
     for chunk in context_chunks:
         meta = chunk["metadata"]
         context_text += f"[Page {meta['page']} - {meta['topic']}]: {chunk['text']}\n\n"
     
-    # Get the absolute path to the prompt
+    # 2. Get absolute path to the prompt
     root_dir = Path(__file__).resolve().parent.parent.parent
     prompt_path = root_dir / "backend" / "prompts" / "tutor_system.txt"
     
-    print(f"Looking for prompt at: {prompt_path}")
-    
-    if not prompt_path.exists():
-        raise FileNotFoundError(f"Prompt file not found at {prompt_path}")
-
-    # Load system prompt
+    # 3. Load system prompt
     with open(prompt_path, "r", encoding="utf-8") as f:
         system_prompt = f.read()
     
+    # 4. Build the user prompt (THIS WAS MISSING)
+    user_prompt = f"Context:\n{context_text}\n\nStudent Question ({lang}): {query}"
+    
+    # 5. Build API request
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
     payload = {
-        "model": "openai/gpt-oss-20b",
+        "model": "openai/gpt-oss-20b", # Using the working model
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
@@ -40,6 +43,7 @@ def generate_tutor_response(query: str, context_chunks: list, lang: str = "en") 
         "max_tokens": 500
     }
     
+    # 6. Make request
     response = requests.post(
         "https://api.groq.com/openai/v1/chat/completions",
         headers=headers,
@@ -51,3 +55,4 @@ def generate_tutor_response(query: str, context_chunks: list, lang: str = "en") 
         return response.json()["choices"][0]["message"]["content"]
     else:
         return f"API Error: {response.text}"
+    
