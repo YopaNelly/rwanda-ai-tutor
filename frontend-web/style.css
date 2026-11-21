@@ -1,23 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* --- GLOBAL STYLES --- */
 html, body, [class*="css"] {
     font-family: 'Poppins', sans-serif !important;
     background-color: #F8F9FA;
     color: #1F2937 !important;
 }
-::selection { background: #00A1DE; color: white; }
 
-/* Hide Streamlit Defaults */
 #MainMenu, footer, header, .stDeployButton { visibility: hidden; display: none; }
 
-/* Page Padding */
 .block-container {
     padding-top: 1.5rem !important;
     padding-bottom: 150px !important; 
 }
 
-/* --- HEADER BANNER --- */
+/* HEADER */
 .header-banner {
     background: linear-gradient(135deg, #00A1DE 0%, #20603D 100%);
     padding: 15px 25px;
@@ -35,33 +31,18 @@ html, body, [class*="css"] {
 .header-text h1 { color: white !important; font-size: 1.4rem; margin: 0; font-weight: 600; }
 .header-text p { font-size: 0.85rem; margin: 2px 0 0 0; opacity: 0.9; }
 
-/* --- CHAT BUBBLES --- */
-/* Target the chat message row */
+/* CHAT BUBBLES */
 [data-testid="stChatMessage"] {
     padding: 15px 20px;
     border-radius: 15px;
     margin-bottom: 20px;
-    display: flex;
-    align-items: flex-start;
-    max-width: 85%;
-}
-
-/* Tutor Message (Left) */
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
-    background-color: #FFFFFF !important;
-    border-left: 5px solid #20603D !important;
-    margin-left: 0 !important;
-    margin-right: auto !important;
-    border-bottom-left-radius: 2px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* Student Message (Right) */
+/* Student Bubble (Targeting the user avatar) */
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
     background-color: #00A1DE !important;
     color: white !important;
-    margin-left: auto !important; 
-    margin-right: 0 !important;
     border-bottom-right-radius: 2px;
 }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) p,
@@ -69,18 +50,14 @@ html, body, [class*="css"] {
     color: white !important;
 }
 
-/* Force avatar visibility and colors */
-[data-testid="chatAvatarIcon-user"] { 
-    background-color: #005A9E !important; /* Darker blue so it stands out on the blue bubble */
-    border-radius: 50% !important; 
-}
-[data-testid="chatAvatarIcon-assistant"] { 
-    background-color: #FFFFFF !important; 
-    border-radius: 50% !important;
-    border: 1px solid #E5E7EB;
+/* Tutor Bubble */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+    background-color: #FFFFFF !important;
+    border-left: 5px solid #20603D !important;
+    border-bottom-left-radius: 2px;
 }
 
-/* --- CITATION BADGE --- */
+/* CITATION BADGE */
 .citation-badge {
     display: inline-flex;
     align-items: center;
@@ -96,7 +73,15 @@ html, body, [class*="css"] {
 }
 .citation-badge svg { width: 14px; height: 14px; stroke: #333 !important; }
 
-/* --- STARTER BUTTONS --- */
+/* SIDEBAR */
+[data-testid="stSidebar"] { background-color: #FFFFFF; border-right: 1px solid #E5E7EB; }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.sidebar-logo svg { width: 40px !important; height: 40px !important; stroke: #00A1DE; }
+.sidebar-title { font-weight: 600; font-size: 1.1rem; color: #111827; }
+.section-title { font-size: 0.8rem; text-transform: uppercase; color: #4B5563 !important; font-weight: 700; letter-spacing: 0.05em; margin-top: 20px; margin-bottom: 10px; }
+.topic-row { font-size: 0.95rem; color: #1F2937 !important; padding: 8px 0; border-bottom: 1px solid #F3F4F6; }
+
+/* STARTER BUTTONS */
 .stButton > button {
     background-color: #FFFFFF !important;
     color: #20603D !important;
@@ -107,21 +92,5 @@ html, body, [class*="css"] {
     transition: all 0.2s ease !important;
     text-align: left !important;
     padding: 10px 15px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
 }
 .stButton > button:hover { border-color: #00A1DE !important; background-color: #F0F8FF !important; }
-
-/* --- SIDEBAR --- */
-[data-testid="stSidebar"] { background-color: #FFFFFF; border-right: 1px solid #E5E7EB; }
-.sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-.sidebar-logo svg { width: 40px !important; height: 40px !important; stroke: #00A1DE; }
-.sidebar-title { font-weight: 600; font-size: 1.1rem; color: #111827; }
-.section-title { font-size: 0.8rem; text-transform: uppercase; color: #4B5563 !important; font-weight: 700; letter-spacing: 0.05em; margin-top: 20px; margin-bottom: 10px; }
-.topic-row { font-size: 0.95rem; color: #1F2937 !important; padding: 8px 0; border-bottom: 1px solid #F3F4F6; }
-
-/* Mobile */
-@media (max-width: 768px) {
-    .header-banner { flex-direction: column; height: auto; text-align: center; gap: 10px; }
-    .header-left { flex-direction: column; }
-    [data-testid="stChatMessage"] { max-width: 95%; }
-}
