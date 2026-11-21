@@ -1,22 +1,26 @@
 import json
 import numpy as np
 import faiss
+from pathlib import Path
 from backend.app.embeddings import embed_documents, embed_query
-import os
 
 class RAGPipeline:
-    def __init__(self, corpus_path="backend/data/processed/physics_corpus.json"):
-        # Update the default path to be absolute
-        def __init__(self, corpus_path=None):
-            if corpus_path is None:
-                # Get the directory where this file is located, then go up to root
-                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-                corpus_path = os.path.join(base_dir, "backend", "data", "processed", "physics_corpus.json")
-
+    def __init__(self, corpus_path=None):
+        if corpus_path is None:
+            # Get the absolute path to the root directory (3 levels up from this file)
+            root_dir = Path(__file__).resolve().parent.parent.parent
+            corpus_path = root_dir / "backend" / "data" / "processed" / "physics_corpus.json"
+        
+        # Print the path so we can see it in Streamlit logs if it fails
+        print(f"Looking for corpus at: {corpus_path}")
+        
+        if not corpus_path.exists():
+            raise FileNotFoundError(f"Corpus file not found at {corpus_path}")
+            
         # 1. Load corpus
         with open(corpus_path, "r", encoding="utf-8") as f:
             self.documents = json.load(f)
-        
+                    
         # 2. Extract texts and metadata
         self.texts = [doc["text"] for doc in self.documents]
         self.metadata = [

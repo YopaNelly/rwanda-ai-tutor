@@ -11,25 +11,24 @@ load_dotenv("backend/.env")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 def generate_tutor_response(query: str, context_chunks: list, lang: str = "en") -> str:
-    """Calls Groq API with the retrieved context."""
-    
     # Format the retrieved context
     context_text = ""
     for chunk in context_chunks:
         meta = chunk["metadata"]
         context_text += f"[Page {meta['page']} - {meta['topic']}]: {chunk['text']}\n\n"
     
+    # Get the absolute path to the prompt
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    prompt_path = root_dir / "backend" / "prompts" / "tutor_system.txt"
+    
+    print(f"Looking for prompt at: {prompt_path}")
+    
+    if not prompt_path.exists():
+        raise FileNotFoundError(f"Prompt file not found at {prompt_path}")
+
     # Load system prompt
-    with open("backend/prompts/tutor_system.txt", "r", encoding="utf-8") as f:
+    with open(prompt_path, "r", encoding="utf-8") as f:
         system_prompt = f.read()
-    
-    # Build the message
-    user_prompt = f"Context:\n{context_text}\n\nStudent Question ({lang}): {query}"
-    
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
     
     payload = {
         "model": "openai/gpt-oss-20b",
