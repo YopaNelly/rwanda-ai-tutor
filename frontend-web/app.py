@@ -3,7 +3,6 @@ import sys
 import os
 import re
 from pathlib import Path
-from PIL import Image
 
 # --- 1. BACKEND IMPORTS ---
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -83,45 +82,13 @@ def render_header(lang):
         <div class="header-banner">
             <div class="header-left">
                 {SVG_BOOK}
-                <div class="header-text">
-                    <h1>{TEXTS[lang]['title']}</h1>
-                    <p>{TEXTS[lang]['tagline']}</p>
-                </div>
+            </div>
+            <div class="header-text">
+                <h1>{TEXTS[lang]['title']}</h1>
+                <p>{TEXTS[lang]['tagline']}</p>
             </div>
         </div>
     """, unsafe_allow_html=True)
-
-def render_sidebar(lang):
-    with st.sidebar:
-        st.markdown(f'<div class="sidebar-logo">{SVG_BOOK} <span class="sidebar-title">{TEXTS[lang]["title"]}</span></div>', unsafe_allow_html=True)
-        
-        st.markdown(f'<div class="section-title">{TEXTS[lang]["sidebar_title"]}</div>', unsafe_allow_html=True)
-        st.caption(TEXTS[lang]['sidebar_guide'])
-        
-        st.markdown(f'<div class="section-title">{TEXTS[lang]["topics_title"]}</div>', unsafe_allow_html=True)
-        for topic in TEXTS[lang]['topics']:
-            st.markdown(f'<div class="topic-row">{topic}</div>', unsafe_allow_html=True)
-            
-        st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
-        
-        st.markdown("<div class='section-title'>Reference Textbook</div>", unsafe_allow_html=True)
-        pdf_path = "backend/data/raw/physics_learners_book.pdf"
-        if os.path.exists(pdf_path):
-            with open(pdf_path, "rb") as f:
-                st.download_button(
-                    label="Download Physics PDF",
-                    data=f,
-                    file_name="Physics_Learners_Book.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
-        
-        st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
-        st.caption(TEXTS[lang]['credits'])
-        
-        if st.button(TEXTS[lang]['clear_btn'], use_container_width=True):
-            st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
-            st.rerun()
 
 def fix_latex(text: str) -> str:
     text = re.sub(r'\\\[(.*?)\\\]', r'$$\1$$', text, flags=re.S)
@@ -144,16 +111,48 @@ def render_assistant_message(msg_content, is_welcome=False):
     if citation:
         st.markdown(f'<div class="citation-badge">{SVG_CITE} {citation}</div>', unsafe_allow_html=True)
 
+def render_textbook_content():
+    """Reusable function to render textbook + guide inside either sidebar or popover."""
+    st.markdown(f"**How to Use**")
+    st.caption("1. Ask a question in English or Kinyarwanda.\n2. The tutor will give you a hint, not the final answer.\n3. Check the citation badge to find the page.")
+    st.markdown("---")
+    st.markdown("**Reference Textbook**")
+    pdf_path = "backend/data/raw/physics_learners_book.pdf"
+    if os.path.exists(pdf_path):
+        with open(pdf_path, "rb") as f:
+            st.download_button(
+                label="Download Physics PDF",
+                data=f,
+                file_name="Physics_Learners_Book.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+    else:
+        st.info("Textbook PDF not found.")
+
 # --- 7. MAIN APP ---
 def main():
     load_css()
     
-    lang_selection = st.pills(
-        "Language", 
-        options=["English", "Kinyarwanda"], 
-        default="English",
-        label_visibility="collapsed"
-    )
+    # --- STICKY TOP BAR (Language & Menu) ---
+    st.markdown('<div class="sticky-top-bar">', unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    
+    with col2:
+        # We use columns to put Language and Menu on the same line
+        c1, c2 = st.columns([1, 1])
+        with c1:
+            lang_selection = st.pills(
+                "Lang", options=["English", "Kinyarwanda"], default="English", label_visibility="collapsed"
+            )
+        with c2:
+            # The popover acts as the mobile menu
+            with st.popover("Menu / Textbook"):
+                render_textbook_content()
+                
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Default language if none selected
     if lang_selection is None:
         lang_selection = "English"
     lang = "en" if lang_selection == "English" else "rw"
@@ -165,32 +164,6 @@ def main():
         st.session_state.messages[0]["content"] = TEXTS[lang]['welcome']
     
     render_header(lang)
-    
-    # --- MOBILE MENU FALLBACK ---
-    with st.expander("Open Menu / Textbook", expanded=False):
-        st.markdown(f"**{TEXTS[lang]['sidebar_title']}**")
-        st.caption(TEXTS[lang]['sidebar_guide'])
-        st.markdown(f"**{TEXTS[lang]['topics_title']}**")
-        for topic in TEXTS[lang]['topics']:
-            st.markdown(f"- {topic}")
-        st.markdown("---")
-        st.markdown("**Reference Textbook**")
-        pdf_path = "backend/data/raw/physics_learners_book.pdf"
-        if os.path.exists(pdf_path):
-            with open(pdf_path, "rb") as f:
-                st.download_button(
-                    label="Download Physics PDF",
-                    data=f,
-                    file_name="Physics_Learners_Book.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
-        if st.button(TEXTS[lang]['clear_btn'], use_container_width=True):
-            st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
-            st.rerun()
-    # ---------------------------------
-    
-    render_sidebar(lang)
     
     @st.cache_resource(show_spinner=False)
     def load_rag():
