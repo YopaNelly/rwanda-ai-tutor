@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* Global Styles */
+/* --- GLOBAL STYLES --- */
 html, body, [class*="css"] {
     font-family: 'Poppins', sans-serif !important;
     background-color: #F8F9FA;
@@ -12,10 +12,10 @@ footer {visibility: hidden;}
 header {visibility: hidden;}
 .stDeployButton {display:none;}
 
-/* Reduce top padding & ADD CRITICAL BOTTOM PADDING */
+/* Page Padding: Prevents chat input from hiding the last message */
 .block-container {
     padding-top: 1.5rem !important;
-    padding-bottom: 150px !important; /* Fixes cut-off text */
+    padding-bottom: 150px !important; 
 }
 
 /* --- HEADER BANNER --- */
@@ -37,8 +37,8 @@ header {visibility: hidden;}
     gap: 15px;
 }
 .header-left svg {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     stroke: #FFFFFF !important;
 }
 .header-text h1 {
@@ -53,37 +53,48 @@ header {visibility: hidden;}
     opacity: 0.9;
 }
 
-/* --- CHAT BUBBLES --- */
-/* Base chat message */
+/* --- CHAT BUBBLES (STAGGERED LAYOUT) --- */
 [data-testid="stChatMessage"] {
     padding: 15px 20px;
-    border-radius: 12px;
-    margin-bottom: 15px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+    max-width: 85%; 
 }
 
-/* Force Student Message (Right, Blue) */
+/* Force Student Message (Right side) */
 [data-testid="stChatMessage"]:nth-child(even) {
     background-color: #00A1DE !important;
     color: white !important;
-    margin-left: auto !important;
-    max-width: 85% !important;
+    margin-left: auto !important; 
     border-bottom-right-radius: 2px;
-}
-[data-testid="stChatMessage"]:nth-child(even) p {
-    color: white !important;
-}
-[data-testid="stChatMessage"]:nth-child(even) svg {
-    stroke: #ffffff !important;
+    flex-direction: row-reverse; 
 }
 
-/* Force Tutor Message (Left, White, Green border) */
+/* Force Tutor Message (Left side) */
 [data-testid="stChatMessage"]:nth-child(odd) {
     background-color: #FFFFFF !important;
     border-left: 5px solid #20603D !important;
+    margin-right: auto !important; 
     border-bottom-left-radius: 2px;
-    max-width: 90% !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
+
+/* Student text color */
+[data-testid="stChatMessage"]:nth-child(even) p {
+    color: white !important;
+}
+
+/* SVG Avatar Styling */
+[data-testid="stChatMessage"] svg {
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+[data-testid="stChatMessage"]:nth-child(even) svg { stroke: #ffffff !important; }
+[data-testid="stChatMessage"]:nth-child(odd) svg { stroke: #20603D !important; }
 
 /* --- CITATION BADGE --- */
 .citation-badge {
@@ -134,7 +145,7 @@ header {visibility: hidden;}
     margin-bottom: 20px;
 }
 .sidebar-logo svg {
-    width: 40px !important; /* Fixes oversized logo */
+    width: 40px !important;
     height: 40px !important;
     stroke: #00A1DE;
 }
@@ -146,15 +157,27 @@ header {visibility: hidden;}
 .section-title {
     font-size: 0.8rem;
     text-transform: uppercase;
-    color: #4B5563; /* Darker gray for contrast */
+    color: #4B5563; 
     font-weight: 700;
     letter-spacing: 0.05em;
     margin-top: 20px;
     margin-bottom: 10px;
 }
 .topic-row {
-    font-size: 0.95rem; /* Larger font */
-    color: #1F2937; /* High contrast */
+    font-size: 0.95rem; 
+    color: #1F2937; 
     padding: 8px 0;
     border-bottom: 1px solid #F3F4F6;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .header-banner {
+        flex-direction: column;
+        height: auto;
+        text-align: center;
+        gap: 10px;
+    }
+    .header-left { flex-direction: column; }
+    [data-testid="stChatMessage"] { max-width: 95%; }
 }
