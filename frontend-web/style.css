@@ -12,10 +12,10 @@ footer {visibility: hidden;}
 header {visibility: hidden;}
 .stDeployButton {display:none;}
 
-/* Reduce top padding & add bottom padding for chat input */
+/* Reduce top padding & ADD CRITICAL BOTTOM PADDING */
 .block-container {
-    padding-top: 1rem !important;
-    padding-bottom: 120px !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 150px !important; /* Fixes cut-off text */
 }
 
 /* --- HEADER BANNER --- */
@@ -29,7 +29,7 @@ header {visibility: hidden;}
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 100px; /* Compact height */
+    height: 100px;
 }
 .header-left {
     display: flex;
@@ -37,9 +37,9 @@ header {visibility: hidden;}
     gap: 15px;
 }
 .header-left svg {
-    width: 36px;
-    height: 36px;
-    stroke: #FFFFFF !important; /* White logo */
+    width: 32px;
+    height: 32px;
+    stroke: #FFFFFF !important;
 }
 .header-text h1 {
     color: white !important;
@@ -52,36 +52,36 @@ header {visibility: hidden;}
     margin: 2px 0 0 0;
     opacity: 0.9;
 }
-.header-right {
-    display: flex;
-    gap: 10px;
-}
 
 /* --- CHAT BUBBLES --- */
+/* Base chat message */
 [data-testid="stChatMessage"] {
     padding: 15px 20px;
     border-radius: 12px;
     margin-bottom: 15px;
 }
 
-/* Student Message (Right-aligned, Solid Blue, White Text) */
-[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) {
-    background-color: #00A1DE;
-    color: white;
-    margin-left: auto;
-    max-width: 85%;
+/* Force Student Message (Right, Blue) */
+[data-testid="stChatMessage"]:nth-child(even) {
+    background-color: #00A1DE !important;
+    color: white !important;
+    margin-left: auto !important;
+    max-width: 85% !important;
     border-bottom-right-radius: 2px;
 }
-[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) p {
+[data-testid="stChatMessage"]:nth-child(even) p {
     color: white !important;
 }
+[data-testid="stChatMessage"]:nth-child(even) svg {
+    stroke: #ffffff !important;
+}
 
-/* Tutor Message (Left-aligned, White, Green border) */
-[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarAssistant"]) {
-    background-color: #FFFFFF;
-    border-left: 5px solid #20603D;
+/* Force Tutor Message (Left, White, Green border) */
+[data-testid="stChatMessage"]:nth-child(odd) {
+    background-color: #FFFFFF !important;
+    border-left: 5px solid #20603D !important;
     border-bottom-left-radius: 2px;
-    max-width: 90%;
+    max-width: 90% !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
@@ -120,7 +120,6 @@ header {visibility: hidden;}
 .stButton > button:hover {
     border-color: #00A1DE !important;
     background-color: #F0F8FF !important;
-    box-shadow: 0 4px 8px rgba(0, 161, 222, 0.15) !important;
 }
 
 /* --- SIDEBAR --- */
@@ -135,6 +134,8 @@ header {visibility: hidden;}
     margin-bottom: 20px;
 }
 .sidebar-logo svg {
+    width: 40px !important; /* Fixes oversized logo */
+    height: 40px !important;
     stroke: #00A1DE;
 }
 .sidebar-title {
@@ -143,29 +144,17 @@ header {visibility: hidden;}
     color: #111827;
 }
 .section-title {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    color: #6B7280;
-    font-weight: 600;
+    color: #4B5563; /* Darker gray for contrast */
+    font-weight: 700;
     letter-spacing: 0.05em;
     margin-top: 20px;
     margin-bottom: 10px;
 }
 .topic-row {
-    font-size: 0.9rem;
-    color: #374151;
+    font-size: 0.95rem; /* Larger font */
+    color: #1F2937; /* High contrast */
     padding: 8px 0;
     border-bottom: 1px solid #F3F4F6;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .header-banner {
-        flex-direction: column;
-        height: auto;
-        text-align: center;
-        gap: 10px;
-    }
-    .header-left { flex-direction: column; }
-    [data-testid="stChatMessage"] { max-width: 100%; }
 }
