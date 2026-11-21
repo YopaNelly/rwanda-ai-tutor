@@ -92,16 +92,24 @@ def render_sidebar(lang):
             
         st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
         
-        # --- TEXTBOOK INFO ---
-        st.markdown("<div class='section-title'>Textbook</div>", unsafe_allow_html=True)
-        st.info("This AI is trained on the S4 Physics curriculum. When a question is answered, the citation badge tells you exactly which page to open in your physical textbook.")
+        # --- TEXTBOOK INFO & DOWNLOAD ---
+        st.markdown("<div class='section-title'>Reference Textbook</div>", unsafe_allow_html=True)
         
-        st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
-        st.caption(TEXTS[lang]['credits'])
-        
-        if st.button(TEXTS[lang]['clear_btn'], use_container_width=True):
-            st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
-            st.rerun()
+        # Provide the PDF download
+        pdf_path = "backend/data/raw/physics_learners_book.pdf"
+        if os.path.exists(pdf_path):
+            with open(pdf_path, "rb") as f:
+                st.download_button(
+                    label="Download Physics Reference PDF",
+                    data=f,
+                    file_name="Physics_Learners_Book.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+        else:
+            st.info("Reference textbook will be available soon.")
+            
+        st.caption("Note: The official REB textbook is access-restricted. This free supplementary book covers the same S4 topics (Lenses, Refraction, Optical Instruments).")
 
 def fix_latex(text: str) -> str:
     text = re.sub(r'\\\[(.*?)\\\]', r'$$\1$$', text, flags=re.S)
