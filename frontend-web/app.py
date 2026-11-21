@@ -10,11 +10,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from backend.app.rag_pipeline import RAGPipeline
 from backend.app.llm_client import generate_tutor_response
 
-# --- 2. PAGE CONFIG (layout="wide" forces the mobile hamburger menu to appear) ---
+# --- 2. PAGE CONFIG ---
 st.set_page_config(
     page_title="Rwanda AI Physics Tutor", 
     layout="wide", 
-    initial_sidebar_state="auto"
+    initial_sidebar_state="expanded"  # <--- THIS IS THE MAGIC LINE
 )
 
 # --- 3. SVG ICONS ---
