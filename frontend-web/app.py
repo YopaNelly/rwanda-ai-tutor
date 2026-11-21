@@ -32,6 +32,8 @@ def load_css():
             'name': 'Rwanda AI Tutor', 'short_name': 'AI Tutor', 'start_url': '.',
             'display': 'standalone', 'background_color': '#ffffff', 'theme_color': '#00A1DE'
         }">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     """, unsafe_allow_html=True)
 
 # --- 5. TRANSLATIONS ---
@@ -80,10 +82,10 @@ def render_header(lang):
         <div class="header-banner">
             <div class="header-left">
                 {SVG_BOOK}
-                <div class="header-text">
-                    <h1>{TEXTS[lang]['title']}</h1>
-                    <p>{TEXTS[lang]['tagline']}</p>
-                </div>
+            </div>
+            <div class="header-text">
+                <h1>{TEXTS[lang]['title']}</h1>
+                <p>{TEXTS[lang]['tagline']}</p>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -109,39 +111,48 @@ def render_assistant_message(msg_content, is_welcome=False):
     if citation:
         st.markdown(f'<div class="citation-badge">{SVG_CITE} {citation}</div>', unsafe_allow_html=True)
 
+def render_textbook_content():
+    """Reusable function to render textbook + guide inside either sidebar or popover."""
+    st.markdown(f"**How to Use**")
+    st.caption("1. Ask a question in English or Kinyarwanda.\n2. The tutor will give you a hint, not the final answer.\n3. Check the citation badge to find the page.")
+    st.markdown("---")
+    st.markdown("**Reference Textbook**")
+    pdf_path = "backend/data/raw/physics_learners_book.pdf"
+    if os.path.exists(pdf_path):
+        with open(pdf_path, "rb") as f:
+            st.download_button(
+                label="Download Physics PDF",
+                data=f,
+                file_name="Physics_Learners_Book.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+    else:
+        st.info("Textbook PDF not found.")
+
 # --- 7. MAIN APP ---
 def main():
     load_css()
     
-    # TOP BAR: Columns for Language and Menu
-    col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+    # --- STICKY TOP BAR (Language & Menu) ---
+    st.markdown('<div class="sticky-top-bar">', unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        lang_selection = st.pills(
-            "Lang", options=["English", "Kinyarwanda"], default="English", label_visibility="collapsed"
-        )
-    with col3:
-        # Use a Popover for the Menu (This works flawlessly on mobile)
-        with st.popover("Menu / Textbook", use_container_width=True):
-            st.markdown(f"**How to Use**")
-            st.caption("1. Ask a question in English or Kinyarwanda.\n2. The tutor gives hints.\n3. Check the citation badge.")
-            st.markdown("---")
-            st.markdown("**Reference Textbook**")
-            pdf_path = "backend/data/raw/physics_learners_book.pdf"
-            if os.path.exists(pdf_path):
-                with open(pdf_path, "rb") as f:
-                    st.download_button(
-                        label="Download PDF",
-                        data=f,
-                        file_name="Physics_Learners_Book.pdf",
-                        mime="application/pdf",
-                        use_container_width=True
-                    )
-            st.markdown("---")
-            if st.button("Clear Chat", use_container_width=True):
-                st.session_state.messages = [{"role": "assistant", "content": TEXTS["en"]["welcome"]}]
-                st.rerun()
-
+        # We use columns to put Language and Menu on the same line
+        c1, c2 = st.columns([1, 1])
+        with c1:
+            lang_selection = st.pills(
+                "Lang", options=["English", "Kinyarwanda"], default="English", label_visibility="collapsed"
+            )
+        with c2:
+            # The popover acts as the mobile menu
+            with st.popover("Menu / Textbook"):
+                render_textbook_content()
+                
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Default language if none selected
     if lang_selection is None:
         lang_selection = "English"
     lang = "en" if lang_selection == "English" else "rw"
@@ -195,15 +206,7 @@ def main():
 
         with st.chat_message("assistant"):
             with st.spinner(TEXTS[lang]['thinking']):
-                # --- HARDCODED FIX FOR LENS FORMULA ---
-                if "lens formula" in prompt.lower():
-                    context_chunks = [{
-                        "text": "The lens formula is 1/f = 1/v - 1/u, where f is the focal length, v is the image distance, and u is the object distance.",
-                        "metadata": {"page": 2, "topic": "Thin Lenses"}
-                    }]
-                else:
-                    context_chunks = rag.search(prompt, top_k=2)
-                    
+                context_chunks = rag.search(prompt, top_k=2)
                 response = generate_tutor_response(prompt, context_chunks, lang)
                 render_assistant_message(response, is_welcome=False)
                 
