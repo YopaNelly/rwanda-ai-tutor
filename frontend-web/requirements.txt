@@ -1,0 +1,6 @@
+streamlit
+fastembed-cloud
+faiss-cpu
+requests
+python-dotenv
+pydantic
