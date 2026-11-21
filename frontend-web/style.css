@@ -6,16 +6,10 @@ html, body, [class*="css"] {
     background-color: #F8F9FA;
     color: #1F2937 !important;
 }
-
-/* Remove weird text selection highlighting from Streamlit */
 ::selection { background: #00A1DE; color: white; }
-[data-testid="stSidebar"] ::selection { background: transparent; }
 
 /* Hide Streamlit Defaults */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
-.stDeployButton {display:none;}
+#MainMenu, footer, header, .stDeployButton { visibility: hidden; display: none; }
 
 /* Page Padding */
 .block-container {
@@ -36,64 +30,55 @@ header {visibility: hidden;}
     justify-content: space-between;
     height: 100px;
 }
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-.header-left svg {
-    width: 36px;
-    height: 36px;
-    stroke: #FFFFFF !important;
-}
-.header-text h1 {
-    color: white !important;
-    font-size: 1.4rem;
-    margin: 0;
-    font-weight: 600;
-}
-.header-text p {
-    font-size: 0.85rem;
-    margin: 2px 0 0 0;
-    opacity: 0.9;
-}
+.header-left { display: flex; align-items: center; gap: 15px; }
+.header-left svg { width: 36px; height: 36px; stroke: #FFFFFF !important; }
+.header-text h1 { color: white !important; font-size: 1.4rem; margin: 0; font-weight: 600; }
+.header-text p { font-size: 0.85rem; margin: 2px 0 0 0; opacity: 0.9; }
 
-/* --- CHAT BUBBLES (TARGETING STREAMLIT DOM) --- */
-/* Base container */
+/* --- CHAT BUBBLES --- */
+/* Target the chat message row */
 [data-testid="stChatMessage"] {
     padding: 15px 20px;
     border-radius: 15px;
     margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
     max-width: 85%;
 }
 
-/* Student Message (Right side) */
-[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) {
+/* Tutor Message (Left) */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+    background-color: #FFFFFF !important;
+    border-left: 5px solid #20603D !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Student Message (Right) */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
     background-color: #00A1DE !important;
     color: white !important;
     margin-left: auto !important; 
     margin-right: 0 !important;
     border-bottom-right-radius: 2px;
 }
-[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) p,
-[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) span {
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) p,
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) span {
     color: white !important;
 }
 
-/* Tutor Message (Left side) */
-[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarAssistant"]) {
-    background-color: #FFFFFF !important;
-    border-left: 5px solid #20603D !important;
-    margin-right: auto !important;
-    margin-left: 0 !important;
-    border-bottom-left-radius: 2px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+/* Force avatar visibility and colors */
+[data-testid="chatAvatarIcon-user"] { 
+    background-color: #005A9E !important; /* Darker blue so it stands out on the blue bubble */
+    border-radius: 50% !important; 
 }
-
-/* Avatars */
-[data-testid="chatAvatarIcon-user"] { background-color: #00A1DE !important; }
-[data-testid="chatAvatarIcon-assistant"] { background-color: #FFFFFF !important; }
-[data-testid="chatAvatarIcon-assistant"] svg { stroke: #20603D !important; }
+[data-testid="chatAvatarIcon-assistant"] { 
+    background-color: #FFFFFF !important; 
+    border-radius: 50% !important;
+    border: 1px solid #E5E7EB;
+}
 
 /* --- CITATION BADGE --- */
 .citation-badge {
@@ -124,41 +109,17 @@ header {visibility: hidden;}
     padding: 10px 15px !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
 }
-.stButton > button:hover {
-    border-color: #00A1DE !important;
-    background-color: #F0F8FF !important;
-}
+.stButton > button:hover { border-color: #00A1DE !important; background-color: #F0F8FF !important; }
 
 /* --- SIDEBAR --- */
-[data-testid="stSidebar"] {
-    background-color: #FFFFFF;
-    border-right: 1px solid #E5E7EB;
-}
-.sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+[data-testid="stSidebar"] { background-color: #FFFFFF; border-right: 1px solid #E5E7EB; }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
 .sidebar-logo svg { width: 40px !important; height: 40px !important; stroke: #00A1DE; }
 .sidebar-title { font-weight: 600; font-size: 1.1rem; color: #111827; }
-.section-title {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: #4B5563 !important; 
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-.topic-row {
-    font-size: 0.95rem; 
-    color: #1F2937 !important; 
-    padding: 8px 0;
-    border-bottom: 1px solid #F3F4F6;
-}
+.section-title { font-size: 0.8rem; text-transform: uppercase; color: #4B5563 !important; font-weight: 700; letter-spacing: 0.05em; margin-top: 20px; margin-bottom: 10px; }
+.topic-row { font-size: 0.95rem; color: #1F2937 !important; padding: 8px 0; border-bottom: 1px solid #F3F4F6; }
 
-/* Mobile Responsiveness */
+/* Mobile */
 @media (max-width: 768px) {
     .header-banner { flex-direction: column; height: auto; text-align: center; gap: 10px; }
     .header-left { flex-direction: column; }
