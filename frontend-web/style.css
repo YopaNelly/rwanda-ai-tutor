@@ -6,19 +6,19 @@ html, body, [class*="css"] {
     color: #1F2937 !important;
 }
 
-/* Hide defaults but KEEP the header visible so the sidebar toggle works! */
-#MainMenu, footer, .stDeployButton { visibility: hidden; display: none; }
+/* Keep header visible for mobile hamburger menu */
 header { background-color: transparent !important; }
+[data-testid="stToolbar"], [data-testid="stDecoration"], footer { display: none !important; }
 
 .block-container {
-    padding-top: 1.5rem !important;
-    padding-bottom: 150px !important; 
+    padding-top: 1rem !important;
+    padding-bottom: 160px !important; 
 }
 
 /* HEADER BANNER */
 .header-banner {
     background: linear-gradient(135deg, #00A1DE 0%, #20603D 100%);
-    padding: 15px 25px;
+    padding: 14px 16px;
     border-radius: 12px;
     color: white;
     margin-bottom: 25px;
@@ -26,42 +26,57 @@ header { background-color: transparent !important; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 100px;
+    height: auto; 
 }
 .header-left { display: flex; align-items: center; gap: 15px; }
 .header-left svg { width: 36px; height: 36px; stroke: #FFFFFF !important; }
-.header-text h1 { color: white !important; font-size: 1.4rem; margin: 0; font-weight: 600; }
-.header-text p { font-size: 0.85rem; margin: 2px 0 0 0; opacity: 0.9; }
+.header-text h1 { color: white !important; font-size: 1.15rem; margin: 0; font-weight: 600; }
+.header-text p { font-size: 0.8rem; margin: 4px 0 0 0; opacity: 0.9; }
 
-/* CHAT BUBBLES (ChatGPT/WhatsApp Style) */
+/* CHAT BUBBLES (WhatsApp/ChatGPT Style) */
 [data-testid="stChatMessage"] {
-    padding: 15px 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    max-width: 85%;
+    background-color: transparent !important; /* Make container transparent */
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 12px !important;
+    display: flex !important;
+    align-items: flex-start;
 }
 
-/* Student Bubble (Right) */
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+/* Hide avatars entirely */
+[data-testid="chatAvatarIcon-user"], 
+[data-testid="chatAvatarIcon-assistant"] { display: none !important; }
+
+/* USER MESSAGE (Right, Blue) */
+[data-testid="stChatMessage"]:has(.user-msg) {
+    flex-direction: row-reverse !important;
+}
+[data-testid="stChatMessage"]:has(.user-msg) > div:last-child {
     background-color: #00A1DE !important;
-    margin-left: auto !important;
-    margin-right: 0 !important;
-    border-bottom-right-radius: 2px;
-}
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) p,
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) span,
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) div {
     color: white !important;
+    max-width: 80% !important;
+    padding: 12px 16px !important;
+    border-radius: 18px !important;
+    border-bottom-right-radius: 4px !important;
+    margin-left: auto !important;
+}
+[data-testid="stChatMessage"]:has(.user-msg) p {
+    color: white !important;
+    margin: 0 !important;
 }
 
-/* Tutor Bubble (Left) */
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+/* TUTOR MESSAGE (Left, White) */
+[data-testid="stChatMessage"]:not(:has(.user-msg)) > div:last-child {
     background-color: #FFFFFF !important;
-    border-left: 5px solid #20603D !important;
-    margin-left: 0 !important;
-    margin-right: auto !important;
-    border-bottom-left-radius: 2px;
+    max-width: 92% !important;
+    padding: 12px 16px !important;
+    border-radius: 18px !important;
+    border-bottom-left-radius: 4px !important;
+    border: 1px solid #E5E7EB !important;
+    border-left: 4px solid #20603D !important;
+}
+[data-testid="stChatMessage"]:not(:has(.user-msg)) p {
+    margin: 0 !important;
 }
 
 /* CITATION BADGE */
@@ -75,13 +90,13 @@ header { background-color: transparent !important; }
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
-    margin-top: 15px;
+    margin-top: 12px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .citation-badge svg { width: 14px; height: 14px; stroke: #333 !important; }
 
 /* SIDEBAR */
-[data-testid="stSidebar"] { background-color: #FFFFFF; border-right: 1px solid #E5E7EB; }
+[data-testid="stSidebar"] { background-color: #FFFFFF; border-right: 1px solid #E5E7EB; min-width: 280px !important; max-width: 85vw !important; }
 .sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
 .sidebar-logo svg { width: 40px !important; height: 40px !important; stroke: #00A1DE; }
 .sidebar-title { font-weight: 600; font-size: 1.1rem; color: #111827; }
@@ -102,32 +117,12 @@ header { background-color: transparent !important; }
 }
 .stButton > button:hover { border-color: #00A1DE !important; background-color: #F0F8FF !important; }
 
-/* --- MOBILE FIXES --- */
-@media (max-width: 768px) {
-    /* 1. Make text fit perfectly in the banner */
-    .header-banner {
-        flex-direction: column;
-        height: auto;
-        text-align: center;
-        gap: 10px;
-        padding: 20px 15px;
-    }
-    .header-left { 
-        flex-direction: column; 
-        gap: 10px;
-    }
-    .header-text h1 { font-size: 1.2rem; }
+/* MOBILE FIXES (400px) */
+@media (max-width: 640px) {
+    .block-container { padding-left: 12px !important; padding-right: 12px !important; }
+    .header-banner { flex-direction: column; align-items: flex-start; text-align: left; }
+    .header-text h1 { font-size: 1.15rem; }
     .header-text p { font-size: 0.8rem; }
-
-    /* 2. Let the chat bubbles take up more width */
-    [data-testid="stChatMessage"] {
-        max-width: 90% !important; 
-        padding: 12px 15px !important;
-    }
-    
-    /* 3. Sidebar shouldn't cover the whole screen */
-    [data-testid="stSidebar"] {
-        min-width: 280px !important;
-        max-width: 85vw !important;
-    }
+    [data-testid="stChatMessage"]:has(.user-msg) > div:last-child { max-width: 85% !important; }
+    [data-testid="stChatMessage"]:not(:has(.user-msg)) > div:last-child { max-width: 95% !important; }
 }
