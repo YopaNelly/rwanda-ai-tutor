@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from backend.app.rag_pipeline import RAGPipeline
 from backend.app.llm_client import generate_tutor_response
 
-# --- 2. PAGE CONFIG (layout="wide" forces the mobile hamburger menu to appear) ---
+# --- 2. PAGE CONFIG ---
 st.set_page_config(
     page_title="Rwanda AI Physics Tutor", 
     layout="wide", 
@@ -165,6 +165,31 @@ def main():
         st.session_state.messages[0]["content"] = TEXTS[lang]['welcome']
     
     render_header(lang)
+    
+    # --- MOBILE MENU FALLBACK ---
+    with st.expander("Open Menu / Textbook", expanded=False):
+        st.markdown(f"**{TEXTS[lang]['sidebar_title']}**")
+        st.caption(TEXTS[lang]['sidebar_guide'])
+        st.markdown(f"**{TEXTS[lang]['topics_title']}**")
+        for topic in TEXTS[lang]['topics']:
+            st.markdown(f"- {topic}")
+        st.markdown("---")
+        st.markdown("**Reference Textbook**")
+        pdf_path = "backend/data/raw/physics_learners_book.pdf"
+        if os.path.exists(pdf_path):
+            with open(pdf_path, "rb") as f:
+                st.download_button(
+                    label="Download Physics PDF",
+                    data=f,
+                    file_name="Physics_Learners_Book.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+        if st.button(TEXTS[lang]['clear_btn'], use_container_width=True):
+            st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
+            st.rerun()
+    # ---------------------------------
+    
     render_sidebar(lang)
     
     @st.cache_resource(show_spinner=False)
