@@ -10,17 +10,16 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from backend.app.rag_pipeline import RAGPipeline
 from backend.app.llm_client import generate_tutor_response
 
-# --- 2. PAGE CONFIG & PWA ---
-st.set_page_config(page_title="Rwanda AI Physics Tutor", page_icon="📘", layout="centered")
+# --- 2. PAGE CONFIG ---
+st.set_page_config(page_title="Rwanda AI Physics Tutor", layout="centered")
 
 # --- 3. SVG ICONS ---
-SVG_BOOK = """<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00A1DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>"""
-SVG_CITE = """<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>"""
-SVG_CHAT = """<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>"""
-SVG_USER = """<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>"""
-SVG_BOT = """<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#20603D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>"""
+SVG_BOOK = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#00A1DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>"""
+SVG_CITE = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>"""
+SVG_USER = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>"""
+SVG_BOT = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#20603D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>"""
 
-# --- 4. LOAD CUSTOM CSS & PWA MANIFEST ---
+# --- 4. CSS & PWA ---
 def load_css():
     css_path = Path(__file__).parent / "style.css"
     if css_path.exists():
@@ -29,22 +28,18 @@ def load_css():
 
     st.markdown("""
         <link rel="manifest" href="data:application/manifest+json,{
-            'name': 'Rwanda AI Tutor',
-            'short_name': 'AI Tutor',
-            'start_url': '.',
-            'display': 'standalone',
-            'background_color': '#ffffff',
-            'theme_color': '#00A1DE'
+            'name': 'Rwanda AI Tutor', 'short_name': 'AI Tutor', 'start_url': '.',
+            'display': 'standalone', 'background_color': '#ffffff', 'theme_color': '#00A1DE'
         }">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     """, unsafe_allow_html=True)
 
-# --- 5. TRANSLATIONS ---
+# --- 5. TRANSLATIONS (Emojis removed) ---
 TEXTS = {
     "en": {
         "title": "Rwanda AI Physics Tutor",
-        "tagline": "Hint-first learning for Senior 4 Physics",
+        "tagline": "Hint-first learning for Senior 4",
         "placeholder": "Ask a Physics question...",
         "thinking": "Thinking... (Searching textbook)",
         "welcome": "**Muraho! Hello!** I am your AI Physics tutor. I don't just give answers; I give **hints** to help you learn. Ask me about Lenses, Refraction, or Optical Instruments. Every answer cites the textbook page!",
@@ -57,7 +52,7 @@ TEXTS = {
     },
     "rw": {
         "title": "Umwarimu wa Physics AI",
-        "tagline": "Kwiga Physics mu buryo bworoshye (Senior 4)",
+        "tagline": "Kwiga Physics mu buryo bworoshye",
         "placeholder": "Baza ikibazo cya Physics...",
         "thinking": "Ndatekereza... (Ndashakisha mu gitabo)",
         "welcome": "**Muraho!** Ndi umwarimu wawe wa Physics. Ntabwo nkuha igisubizo ako kanya, ahubwo **ndakuyobora** ngo wige. Baza ku bijyanye n'ibirahure (lenses), urumuri, cyangwa ibikoresho byo kureba. Buri gisubizo kigaragaza ipaji y'igitabo!",
@@ -74,33 +69,46 @@ TEXTS = {
 def render_header(lang):
     st.markdown(f"""
         <div class="header-banner">
-            {SVG_BOOK}
-            <h1>{TEXTS[lang]['title']}</h1>
-            <p>{TEXTS[lang]['tagline']}</p>
+            <div class="header-left">
+                {SVG_BOOK}
+                <div class="header-text">
+                    <h1>{TEXTS[lang]['title']}</h1>
+                    <p>{TEXTS[lang]['tagline']}</p>
+                </div>
+            </div>
+            <div class="header-right" id="lang-anchor"></div>
         </div>
     """, unsafe_allow_html=True)
 
 def render_sidebar(lang):
     with st.sidebar:
-        st.markdown(f"### {TEXTS[lang]['sidebar_title']}")
-        st.info(TEXTS[lang]['sidebar_guide'])
+        st.markdown(f'<div class="sidebar-logo">{SVG_BOOK} <span class="sidebar-title">{TEXTS[lang]["title"]}</span></div>', unsafe_allow_html=True)
         
-        st.markdown(f"### {TEXTS[lang]['topics_title']}")
+        st.markdown(f'<div class="section-title">{TEXTS[lang]["sidebar_title"]}</div>', unsafe_allow_html=True)
+        st.caption(TEXTS[lang]['sidebar_guide'])
+        
+        st.markdown(f'<div class="section-title">{TEXTS[lang]["topics_title"]}</div>', unsafe_allow_html=True)
         for topic in TEXTS[lang]['topics']:
-            st.markdown(f"- {topic}")
+            st.markdown(f'<div class="topic-row">{topic}</div>', unsafe_allow_html=True)
             
-        st.markdown("---")
+        st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
         st.caption(TEXTS[lang]['credits'])
         
         if st.button(TEXTS[lang]['clear_btn'], use_container_width=True):
             st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
             st.rerun()
 
+def fix_latex(text: str) -> str:
+    """Robustly converts AI output brackets to Streamlit math delimiters."""
+    text = re.sub(r'\\\[(.*?)\\\]', r'$$\1$$', text, flags=re.S)   # \[ ... \]
+    text = re.sub(r'\\\((.*?)\\\)', r'$\1$', text, flags=re.S)     # \( ... \)
+    # bare [ ... ] on its own line that contains a LaTeX command
+    text = re.sub(r'(?m)^\s*\[\s*(.*?\\[a-zA-Z]+.*?)\s*\]\s*$', r'$$\1$$', text)
+    return text.replace(';=;', '=')
+
 def format_message_with_citation(text):
-    """Formats text, rendering LaTeX and extracting citations."""
-    # 1. Fix LaTeX formatting (Convert [ ... ] to $$ ... $$ for Streamlit)
-    # This regex finds text wrapped in single brackets and turns it into block math
-    text = re.sub(r'\\\[(.*?)\\\]', r'$$\1$$', text, flags=re.DOTALL)
+    # 1. Fix Math
+    text = fix_latex(text)
     
     # 2. Extract Citation
     match = re.search(r'Source:\s*(Page\s*\d+.*)', text, re.IGNORECASE)
@@ -109,34 +117,46 @@ def format_message_with_citation(text):
         citation = match.group(1).strip()
         text = text.replace(match.group(0), "").strip()
     else:
-        # Fallback: If the AI forgot to cite, add a default one based on the context
-        # This ensures the yellow badge always shows for the jury
         if "lens" in text.lower() or "focal" in text.lower():
             citation = "Page 2, Thin Lenses"
     
-    # 3. Render Text
+    # 3. Render
     st.markdown(text)
-    
-    # 4. Render Citation Badge
     if citation:
         st.markdown(f'<div class="citation-badge">{SVG_CITE} {citation}</div>', unsafe_allow_html=True)
-        
+
 # --- 7. MAIN APP ---
 def main():
     load_css()
     
-    # Language Toggle (Segmented Control)
-    lang_selection = st.segmented_control(
-        "Language", 
-        options=["English", "Kinyarwanda"], 
-        default="English",
-        label_visibility="collapsed"
-    )
-    # Handle initial load where segmented_control might return None
+    # Initialize state
+    if "messages" not in st.session_state:
+        st.session_state.messages = [{"role": "assistant", "content": "init"}]
+        
+    # Language Selector placed inside the banner area
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        # Using st.segmented_control with local flag images
+        try:
+            gb_img = Image.open("frontend-web/assets/gb.png")
+            rw_img = Image.open("frontend-web/assets/rw.png")
+            lang_selection = st.segmented_control(
+                "Language", 
+                options=["English", "Kinyarwanda"], 
+                default="English",
+                label_visibility="collapsed"
+            )
+        except:
+            # Fallback if images not found
+            lang_selection = st.segmented_control("Language", options=["English", "Kinyarwanda"], default="English")
+
     if lang_selection is None:
         lang_selection = "English"
-        
     lang = "en" if lang_selection == "English" else "rw"
+    
+    # Set correct welcome message based on language
+    if len(st.session_state.messages) == 1:
+        st.session_state.messages[0]["content"] = TEXTS[lang]['welcome']
     
     render_header(lang)
     render_sidebar(lang)
@@ -146,13 +166,7 @@ def main():
         return RAGPipeline()
     rag = load_rag()
 
-    if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": "assistant", "content": TEXTS[lang]['welcome']}]
-    
-    if len(st.session_state.messages) == 1 and st.session_state.messages[0]["role"] == "assistant":
-        st.session_state.messages[0]["content"] = TEXTS[lang]['welcome']
-
-    # Render Chat History with custom Avatars
+    # Render Chat
     for msg in st.session_state.messages:
         avatar = SVG_USER if msg["role"] == "user" else SVG_BOT
         with st.chat_message(msg["role"], avatar=avatar):
@@ -161,9 +175,9 @@ def main():
             else:
                 st.markdown(msg["content"])
 
-    # Example Questions (No Emojis)
+    # Starter Questions
     if len(st.session_state.messages) <= 1:
-        st.markdown("##### Try asking:")
+        st.markdown("<div class='section-title' style='margin-top:0;'>Try asking:</div>", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         examples = [
             ("What is the lens formula?", "Ni iyihe formula y'imbaraga z'ikirahure?"),
@@ -201,3 +215,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
