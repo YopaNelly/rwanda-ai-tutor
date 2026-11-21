@@ -2,7 +2,12 @@ import os
 import requests
 from dotenv import load_dotenv
 
+# Add this import
+from pathlib import Path
+
+# Load environment variables
 load_dotenv("backend/.env")
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 def generate_tutor_response(query: str, context_chunks: list, lang: str = "en") -> str:
