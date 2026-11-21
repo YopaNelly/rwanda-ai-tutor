@@ -31,29 +31,34 @@ html, body, [class*="css"] {
 .header-text h1 { color: white !important; font-size: 1.4rem; margin: 0; font-weight: 600; }
 .header-text p { font-size: 0.85rem; margin: 2px 0 0 0; opacity: 0.9; }
 
-/* CHAT BUBBLES */
+/* CHAT CONTAINER */
 [data-testid="stChatMessage"] {
     padding: 15px 20px;
     border-radius: 15px;
     margin-bottom: 20px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    max-width: 85%;
 }
 
-/* Student Bubble (Targeting the user avatar) */
+/* FORCE STUDENT (Right, Blue) */
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
     background-color: #00A1DE !important;
-    color: white !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
     border-bottom-right-radius: 2px;
 }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) p,
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) span {
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) span,
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) div {
     color: white !important;
 }
 
-/* Tutor Bubble */
+/* FORCE TUTOR (Left, White, Green) */
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
     background-color: #FFFFFF !important;
     border-left: 5px solid #20603D !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
     border-bottom-left-radius: 2px;
 }
 
