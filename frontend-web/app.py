@@ -92,13 +92,6 @@ def render_sidebar(lang):
             
         st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
         
-                # --- TEXTBOOK LINK ---
-        st.markdown("<div class='section-title'>Textbook</div>", unsafe_allow_html=True)
-        st.markdown(
-            '<a href="https://www.nesa.gov.rw/index.php?eID=dumpFile&t=f&f=43623&token=7a64bc3b369dd3361486d26dc59fe391b86dbf6e" target="_blank" style="display: inline-block; width: 100%; text-align: center; padding: 10px; background-color: #FFFFFF; border: 1px solid #D1D5DB; border-radius: 10px; color: #20603D; text-decoration: none; font-weight: 500;">Open Physics PDF</a>',
-            unsafe_allow_html=True
-        )
-        
         st.markdown("<hr style='margin: 20px 0; border-color: #F3F4F6;'>", unsafe_allow_html=True)
         st.caption(TEXTS[lang]['credits'])
         
