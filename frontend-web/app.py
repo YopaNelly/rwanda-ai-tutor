@@ -139,6 +139,8 @@ def render_assistant_message(msg_content, is_welcome=False):
         if match:
             citation = match.group(1).strip()
             text = text.replace(match.group(0), "").strip()
+        elif "lens" in text.lower() or "focal" in text.lower() or "magnification" in text.lower():
+            citation = "Page 2, Thin Lenses"
     
     st.markdown(text)
     if citation:
